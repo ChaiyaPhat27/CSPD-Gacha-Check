@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CSPD Gacha Schedule</title>
+    
+    <!-- นำเข้าฟอนต์ Anuphan -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- นำเข้า FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #F5F5F7; /* Apple's signature light gray */
+            --card-bg: #FFFFFF;
+            --text-main: #1D1D1F;
+            --text-secondary: #86868B;
+            --accent-color: #0071E3; /* iOS Blue */
+            --accent-hover: #005BB5;
+            --input-bg: rgba(0, 0, 0, 0.04);
+            --border-radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Anuphan', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+        }
+
+        .header-icon {
+            font-size: 32px;
+            color: var(--accent-color);
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            border: none;
+            background: var(--input-bg);
+            font-size: 18px;
+            font-weight: 500;
+            text-align: center;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]::placeholder {
+            color: #A1A1A6;
+        }
+
+        input[type="number"]:focus {
+            background: rgba(0, 113, 227, 0.05);
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            border: none;
+            background: var(--accent-color);
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: scale(0.98);
+        }
+
+        /* ส่วนแสดงผล */
+        #result-container {
+            display: none;
+            margin-top: 32px;
+            text-align: left;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        .schedule-card {
+            background: var(--bg-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+
+        .schedule-card h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .schedule-card h4 i {
+            color: var(--accent-color);
+        }
+
+        .schedule-item {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .schedule-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .schedule-item i {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #A1A1A6;
+            width: 14px;
+            text-align: center;
+        }
+
+        .schedule-item strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .error-msg {
+            color: #FF3B30; /* iOS Red */
+            font-size: 14px;
+            margin-top: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* ส่วนท้าย (Footer) */
+        .footer {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            text-align: left;
+        }
+
+        .disclaimer {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .disclaimer i {
+            margin-top: 2px;
+        }
+
+        .contact-box {
+            background: var(--bg-color);
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .contact-box strong {
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        .ig-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .ig-link:hover {
+            background: #F5F5F7;
+            transform: translateY(-1px);
+        }
+
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <i class="fa-solid fa-layer-group header-icon"></i>
+        <h1>เช็คตารางกิจกรรม CSPD</h1>
+        <p class="subtitle">กรอกหมายเลข Gacha ของคุณเพื่อตรวจสอบตารางเวลาและสถานที่</p>
+
+        <div class="input-wrapper">
+            <input type="number" id="gachaInput" placeholder="หมายเลข Gacha (เช่น 150)" pattern="[0-9]*">
+        </div>
+        <button onclick="checkGacha()">ตรวจสอบตาราง</button>
+
+        <div id="result-container"></div>
+
+        <div class="footer">
+            <div class="disclaimer">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>ข้อมูลนี้เป็นเพียงข้อมูลอ้างอิงเบื้องต้นเพื่ออำนวยความสะดวกในการจัดเตรียมความพร้อม กรุณาตรวจสอบกับสตาฟอีกครั้งหน้างาน</span>
+            </div>
+            <div class="contact-box">
+                <strong>ผู้พัฒนาระบบ</strong><br>
+                นายชัยภัทร ขำเกิด<br>
+                สำนักวิชาวิทยาศาสตร์ สาขาด้านการสอนคณิตศาสตร์<br>
+                <a href="https://www.instagram.com/chaiya_phat27?igsh=MXdyMHRpY2d1NGJobA==" target="_blank" class="ig-link">
+                    <i class="fa-brands fa-instagram"></i> chaiya_phat27
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkGacha() {
+            const inputVal = document.getElementById('gachaInput').value;
+            const resultDiv = document.getElementById('result-container');
+            const g = parseInt(inputVal);
+
+            // เคลียร์ผลลัพธ์
+            resultDiv.style.display = 'none';
+            resultDiv.innerHTML = '';
+
+            // ตรวจสอบความถูกต้อง
+            if (isNaN(g) || g < 1 || g > 400) {
+                resultDiv.innerHTML = '<div class="error-msg"><i class="fa-solid fa-circle-exclamation"></i> กรุณากรอกหมายเลข Gacha ระหว่าง 1 - 400</div>';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            let morningContent = '';
+            let afternoonContent = '';
+
+            // --- Logic การคำนวณ ---
+            if (g >= 1 && g <= 200) {
+                // เช้า: ฐาน 1
+                if (g <= 65) {
+                    morningContent = `
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>08.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>
+                    `;
+                } else if (g <= 130) {
+                    morningContent = `
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>09.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>
+                    `;
+                } else {
+                    morningContent = `
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>10.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>
+                    `;
+                }
+
+                // บ่าย: ฐาน 2 & 3
+                if (g <= 100) {
+                    afternoonContent = `
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>13.30 - 15.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>15.00 - 15.30 น.</strong><br>พักเปลี่ยนฐาน</div></div>
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>15.30 - 17.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div>
+                    `;
+                } else {
+                    afternoonContent = `
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>13.30 - 15.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>15.00 - 15.30 น.</strong><br>พักเปลี่ยนฐาน</div></div>
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>15.30 - 17.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div>
+                    `;
+                }
+            } else if (g >= 201 && g <= 400) {
+                // เช้า: ฐาน 2 & 3
+                if (g <= 300) {
+                    morningContent = `
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>08.30 - 10.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>10.00 - 10.30 น.</strong><br>พักเปลี่ยนฐาน</div></div>
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>10.30 - 12.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div>
+                    `;
+                } else {
+                    morningContent = `
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>08.30 - 10.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>10.00 - 10.30 น.</strong><br>พักเปลี่ยนฐาน</div></div>
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>10.30 - 12.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div>
+                    `;
+                }
+
+                // บ่าย: ฐาน 1
+                if (g <= 265) {
+                    afternoonContent = `
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>13.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>
+                    `;
+                } else if (g <= 330) {
+                    afternoonContent = `
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>14.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>
+                    `;
+                } else {
+                    afternoonContent = `
+                        <div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>15.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div>
+                        <div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>
+                    `;
+                }
+            }
+
+            // Render Results
+            resultDiv.innerHTML = `
+                <div class="result-title">ตารางของ Gacha ${g}</div>
+                
+                <div class="schedule-card">
+                    <h4><i class="fa-regular fa-sun"></i> ช่วงเช้า (08.30 - 12.00 น.)</h4>
+                    ${morningContent}
+                </div>
+                
+                <div class="schedule-card">
+                    <h4><i class="fa-solid fa-cloud-sun"></i> ช่วงบ่าย (13.30 - 17.00 น.)</h4>
+                    ${afternoonContent}
+                </div>
+            `;
+            
+            // Re-trigger animation
+            resultDiv.style.animation = 'none';
+            resultDiv.offsetHeight; // Trigger reflow
+            resultDiv.style.animation = null;
+            resultDiv.style.display = 'block';
+        }
+
+        // รองรับการกด Enter
+        document.getElementById("gachaInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkGacha();
+            }
+        });
+    </script>
+</body>
+</html>
