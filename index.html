@@ -8,16 +8,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --bg-color: #F5F5F7; /* Apple's signature light gray */
+            --bg-color: #F5F5F7;
             --card-bg: #FFFFFF;
             --text-main: #1D1D1F;
             --text-secondary: #86868B;
-            --accent-color: #0071E3; /* iOS Blue */
+            --accent-color: #0071E3;
             --accent-hover: #005BB5;
             --input-bg: rgba(0, 0, 0, 0.04);
             --border-radius: 24px;
@@ -77,10 +76,9 @@
             margin-bottom: 16px;
         }
 
-        /* ปรับ Input และ Select ให้สวยงาม */
         input[type="number"], input[type="text"], select {
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             border-radius: 16px;
             border: none;
             background-color: var(--input-bg);
@@ -102,7 +100,6 @@
             box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
         }
 
-        /* ตกแต่ง Dropdown สไตล์ iOS */
         select {
             appearance: none;
             -webkit-appearance: none;
@@ -115,7 +112,7 @@
 
         button {
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             border-radius: 16px;
             border: none;
             background: var(--accent-color);
@@ -131,12 +128,11 @@
             transform: scale(0.98);
         }
 
-        /* ปุ่มแบบโปร่ง (Outline Button) */
         button.outline-btn {
             background: transparent;
             color: var(--accent-color);
             border: 2px solid var(--accent-color);
-            margin-top: 16px;
+            margin-top: 10px;
         }
 
         button.outline-btn:hover {
@@ -144,12 +140,11 @@
             transform: scale(0.98);
         }
 
-        /* ส่วนแสดงผล */
         #result-container, #friends-container {
             display: none;
             margin-top: 32px;
             text-align: left;
-            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .result-title {
@@ -161,10 +156,11 @@
         }
 
         .schedule-card {
-            background: var(--bg-color);
+            background: #F9F9FB;
             border-radius: 16px;
-            padding: 20px;
+            padding: 16px;
             margin-bottom: 12px;
+            border: 1px solid rgba(0,0,0,0.03);
         }
 
         .schedule-card h4 {
@@ -175,7 +171,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding-bottom: 12px;
+            padding-bottom: 10px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
@@ -184,7 +180,7 @@
         .schedule-item {
             font-size: 14px;
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.5;
             margin-bottom: 10px;
             display: flex;
             align-items: flex-start;
@@ -192,7 +188,7 @@
         }
 
         .schedule-item:last-child { margin-bottom: 0; }
-        .schedule-item i { margin-top: 4px; font-size: 12px; color: #A1A1A6; width: 14px; text-align: center; }
+        .schedule-item i { margin-top: 3px; font-size: 12px; color: #A1A1A6; width: 14px; text-align: center; }
         .schedule-item strong { color: var(--text-main); font-weight: 600; }
 
         .error-msg {
@@ -206,26 +202,119 @@
             gap: 8px;
         }
 
-        /* UI สำหรับรายชื่อเพื่อน */
-        .friend-card {
-            background: var(--bg-color);
-            border-radius: 16px;
-            padding: 16px;
+        /* กล่องรายชื่อเพื่อนที่มี Scrollbar */
+        #friend-list {
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 5px;
+            margin-bottom: 16px;
+        }
+
+        #friend-list::-webkit-scrollbar { width: 5px; }
+        #friend-list::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
+
+        /* การจัดกลุ่มรายชื่อเพื่อน */
+        .gacha-group-card {
+            background: #F9F9FB;
+            border-radius: 14px;
+            padding: 14px;
             margin-bottom: 10px;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        /* ไฮไลท์การ์ดกลุ่มตัวเอง */
+        .gacha-group-card.my-group {
+            background: #FFFFFF;
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.08);
+        }
+
+        .gacha-group-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* แถวข้อมูลแต่ละคน */
+        .contact-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 8px 0; /* ลดความกว้างลง ไม่เปลืองพื้นที่ */
+            border-bottom: 1px dashed rgba(0,0,0,0.05);
+            gap: 10px; 
         }
-        .friend-info { display: flex; flex-direction: column; text-align: left; }
-        .friend-gacha { font-size: 13px; color: var(--accent-color); font-weight: 600; margin-bottom: 4px; }
-        .friend-contact { font-size: 15px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
-        .copy-btn {
-            background: #E5E5EA; color: var(--text-main); border: none; padding: 8px 14px; width: auto;
-            border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;
-        }
-        .copy-btn:hover { background: #D1D1D6; transform: none; }
 
-        /* Modal สำหรับแปะวาร์ป */
+        .contact-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        /* ส่วนข้อมูลและไอคอน */
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1; 
+            min-width: 0; 
+        }
+
+        .platform-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            flex-shrink: 0; 
+        }
+
+        .contact-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap; /* ห้ามตกบรรทัด */
+            overflow: hidden; /* ซ่อนส่วนที่เกิน */
+            text-overflow: ellipsis; /* ใส่จุดไข่ปลา ... */
+        }
+
+        /* ปุ่ม Action (แก้บั๊ก width: 100% ตรงนี้) */
+        button.action-btn, a.action-btn {
+            width: auto; /* สำคัญมาก ห้ามขยาย 100% */
+            background: #E5E5EA;
+            color: var(--text-main);
+            border: none;
+            padding: 6px 10px; /* ลดขนาดปุ่มลงนิดนึง */
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            flex-shrink: 0; 
+            white-space: nowrap; 
+        }
+
+        button.action-btn:hover, a.action-btn:hover { background: #D1D1D6; transform: scale(0.98); }
+        
+        button.action-btn.link-btn, a.action-btn.link-btn {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        button.action-btn.link-btn:hover, a.action-btn.link-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Modal แปะวาร์ป */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
@@ -264,8 +353,9 @@
         }
         .disclaimer i { margin-top: 2px; }
         .contact-box {
-            background: var(--bg-color); padding: 16px; border-radius: 12px;
+            background: #F9F9FB; padding: 16px; border-radius: 12px;
             font-size: 13px; line-height: 1.6; color: var(--text-secondary);
+            border: 1px solid rgba(0,0,0,0.03);
         }
         .contact-box strong { color: var(--text-main); font-size: 14px; }
         .ig-link {
@@ -273,10 +363,10 @@
             text-decoration: none; font-weight: 500; margin-top: 8px; padding: 8px 12px;
             background: #FFFFFF; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05); transition: all 0.2s ease;
         }
-        .ig-link:hover { background: #F5F5F7; transform: translateY(-1px); }
+        .ig-link:hover { background: var(--bg-color); transform: translateY(-1px); }
 
         @keyframes slideUpFade {
-            0% { opacity: 0; transform: translateY(20px); }
+            0% { opacity: 0; transform: translateY(15px); }
             100% { opacity: 1; transform: translateY(0); }
         }
     </style>
@@ -362,7 +452,7 @@
                 </select>
             </div>
             <div class="input-wrapper">
-                <input type="text" id="myContact" placeholder="พิมพ์ ID หรือ ลิงก์ที่นี่">
+                <input type="text" id="myContact" placeholder="พิมพ์ ID หรือ วางลิงก์ที่นี่">
             </div>
             
             <div class="privacy-notice">
@@ -375,7 +465,6 @@
     </div>
 
     <script>
-        // ตั้งค่า Supabase API
         const SUPABASE_URL = "https://pehcsvahuounbxgqxbrt.supabase.co/rest/v1/contacts";
         const SUPABASE_KEY = "sb_publishable_at6z6lMA5mhi7XpdGPjglQ_18mLDuPZ";
 
@@ -387,7 +476,12 @@
             if(platform === 'FB') return '<i class="fa-brands fa-facebook" style="color: #1877F2;"></i>';
             if(platform === 'Line') return '<i class="fa-brands fa-line" style="color: #00B900;"></i>';
             if(platform === 'X') return '<i class="fa-brands fa-x-twitter" style="color: #000000;"></i>';
-            return '<i class="fa-solid fa-link"></i>';
+            return '<i class="fa-solid fa-link" style="color: var(--text-secondary);"></i>';
+        }
+
+        function isUrl(string) {
+            try { return Boolean(new URL(string)); }
+            catch(e){ return false; }
         }
 
         function checkGacha() {
@@ -396,12 +490,10 @@
             const friendsDiv = document.getElementById('friends-container');
             const g = parseInt(inputVal);
 
-            // เคลียร์ผลลัพธ์
             resultDiv.style.display = 'none';
             resultDiv.innerHTML = '';
             friendsDiv.style.display = 'none';
 
-            // ตรวจสอบความถูกต้อง
             if (isNaN(g) || g < 1 || g > 400) {
                 resultDiv.innerHTML = '<div class="error-msg"><i class="fa-solid fa-circle-exclamation"></i> กรุณากรอกหมายเลข Gacha ระหว่าง 1 - 400</div>';
                 resultDiv.style.display = 'block';
@@ -411,7 +503,6 @@
             currentGacha = g;
             document.getElementById('myGacha').value = g;
 
-            // คำนวณช่วงเวลาสำหรับการค้นหาเพื่อนอัตโนมัติ
             if (g <= 65) currentBlocks.morning = [1, 65];
             else if (g <= 130) currentBlocks.morning = [66, 130];
             else if (g <= 200) currentBlocks.morning = [131, 200];
@@ -427,36 +518,22 @@
             let morningContent = '';
             let afternoonContent = '';
 
-            // --- Logic การคำนวณจากไฟล์เดิม ---
             if (g >= 1 && g <= 200) {
-                if (g <= 65) {
-                    morningContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>08.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
-                } else if (g <= 130) {
-                    morningContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>09.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
-                } else {
-                    morningContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>10.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
-                }
-                if (g <= 100) {
-                    afternoonContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>13.30 - 15.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div><div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>15.00 - 15.30 น.</strong><br>พักเปลี่ยนฐาน</div></div><div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>15.30 - 17.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div>`;
-                } else {
-                    afternoonContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>13.30 - 15.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div><div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>15.00 - 15.30 น.</strong><br>พักเปลี่ยนฐาน</div></div><div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>15.30 - 17.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div>`;
-                }
+                if (g <= 65) morningContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>08.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
+                else if (g <= 130) morningContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>09.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
+                else morningContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>10.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
+                
+                if (g <= 100) afternoonContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>13.30 - 15.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div><div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>15.00 - 15.30 น.</strong><br>พักเปลี่ยนฐาน</div></div><div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>15.30 - 17.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div>`;
+                else afternoonContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>13.30 - 15.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div><div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>15.00 - 15.30 น.</strong><br>พักเปลี่ยนฐาน</div></div><div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>15.30 - 17.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div>`;
             } else if (g >= 201 && g <= 400) {
-                if (g <= 300) {
-                    morningContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>08.30 - 10.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div><div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>10.00 - 10.30 น.</strong><br>พักเปลี่ยนฐาน</div></div><div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>10.30 - 12.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div>`;
-                } else {
-                    morningContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>08.30 - 10.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div><div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>10.00 - 10.30 น.</strong><br>พักเปลี่ยนฐาน</div></div><div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>10.30 - 12.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div>`;
-                }
-                if (g <= 265) {
-                    afternoonContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>13.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
-                } else if (g <= 330) {
-                    afternoonContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>14.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
-                } else {
-                    afternoonContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>15.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
-                }
+                if (g <= 300) morningContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>08.30 - 10.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div><div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>10.00 - 10.30 น.</strong><br>พักเปลี่ยนฐาน</div></div><div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>10.30 - 12.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div>`;
+                else morningContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>08.30 - 10.00 น.</strong><br>ฐานที่ 3 — อาคารไทยบุรี / อาคารเรียนรวม 3, 5</div></div><div class="schedule-item"><i class="fa-solid fa-mug-hot"></i> <div><strong>10.00 - 10.30 น.</strong><br>พักเปลี่ยนฐาน</div></div><div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>10.30 - 12.00 น.</strong><br>ฐานที่ 2 — ห้องประชุมใหญ่ อาคารไทยบุรี</div></div>`;
+                
+                if (g <= 265) afternoonContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>13.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
+                else if (g <= 330) afternoonContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>14.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
+                else afternoonContent = `<div class="schedule-item"><i class="fa-regular fa-clock"></i> <div><strong>15.30 น.</strong> (รอบละ 1 ชั่วโมง)</div></div><div class="schedule-item"><i class="fa-solid fa-flag"></i> <div>ฐานที่ 1</div></div><div class="schedule-item"><i class="fa-solid fa-location-dot"></i> <div>อาคารสถาปัตย์ (เรียนรู้ศูนย์บรรณสาร)</div></div>`;
             }
 
-            // Render Results
             resultDiv.innerHTML = `
                 <div class="result-title">ตารางของ Gacha ${g}</div>
                 <div class="schedule-card">
@@ -476,7 +553,6 @@
             resultDiv.style.display = 'block';
             friendsDiv.style.display = 'block';
             
-            // ค้นหาเพื่อนอัตโนมัติ
             document.getElementById('periodFilter').value = 'auto';
             searchFriends();
         }
@@ -487,7 +563,7 @@
             listDiv.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-secondary);"><i class="fa-solid fa-spinner fa-spin"></i> กำลังค้นหาข้อมูล...</div>';
 
             try {
-                let url = `${SUPABASE_URL}?select=*&order=created_at.desc`;
+                let url = `${SUPABASE_URL}?select=*`;
                 let rangeCondition = "";
                 
                 if (filter === 'auto') {
@@ -506,24 +582,76 @@
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
                 });
 
-                const data = await response.json();
+                const rawData = await response.json();
                 
-                if (data.length === 0) {
+                if (rawData.length === 0) {
                     listDiv.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-secondary);">ยังไม่มีใครลงวาร์ปในช่วงนี้เลยครับ</div>';
                     return;
                 }
 
-                listDiv.innerHTML = data.map(friend => `
-                    <div class="friend-card">
-                        <div class="friend-info">
-                            <span class="friend-gacha">Gacha ${friend.gacha} ${friend.gacha === currentGacha ? '(คุณ)' : ''}</span>
-                            <span class="friend-contact">${getPlatformIcon(friend.platform)} ${friend.contact_info}</span>
+                const uniqueData = rawData.filter((value, index, self) =>
+                    index === self.findIndex((t) => (
+                        t.gacha === value.gacha && t.platform === value.platform && t.contact_info === value.contact_info
+                    ))
+                );
+
+                const groupedData = uniqueData.reduce((acc, curr) => {
+                    if (!acc[curr.gacha]) acc[curr.gacha] = [];
+                    acc[curr.gacha].push(curr);
+                    return acc;
+                }, {});
+
+                // เรียงลำดับคีย์: ให้กลุ่มตัวเอง (currentGacha) อยู่บนสุดเสมอ
+                let groupKeys = Object.keys(groupedData);
+                groupKeys.sort((a, b) => {
+                    let numA = parseInt(a);
+                    let numB = parseInt(b);
+                    if (numA === currentGacha) return -1;
+                    if (numB === currentGacha) return 1;
+                    return numA - numB;
+                });
+
+                let htmlOutput = '';
+                for (let i = 0; i < groupKeys.length; i++) {
+                    let gachaNum = groupKeys[i];
+                    let friends = groupedData[gachaNum];
+                    
+                    let isMyGroup = (parseInt(gachaNum) === currentGacha);
+                    let cardClass = isMyGroup ? 'gacha-group-card my-group' : 'gacha-group-card';
+                    let badgeHTML = isMyGroup ? ' <span style="color: #FF9500; font-size: 12px; margin-left: 4px;">(กลุ่มคุณ)</span>' : '';
+                    
+                    htmlOutput += `
+                    <div class="${cardClass}">
+                        <div class="gacha-group-header">
+                            <i class="fa-solid fa-users"></i> Gacha ${gachaNum} ${badgeHTML}
                         </div>
-                        <button class="copy-btn" onclick="copyText('${friend.contact_info}')">
-                            <i class="fa-regular fa-copy"></i> คัดลอก
-                        </button>
-                    </div>
-                `).join('');
+                        <div class="gacha-items">`;
+                    
+                    friends.forEach(friend => {
+                        let isLinkValid = isUrl(friend.contact_info);
+                        let actionButton = '';
+
+                        if (isLinkValid) {
+                            actionButton = `<a href="${friend.contact_info}" target="_blank" class="action-btn link-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> เปิดลิงก์</a>`;
+                        } else {
+                            actionButton = `<button class="action-btn" onclick="copyText('${friend.contact_info}')"><i class="fa-regular fa-copy"></i> คัดลอก</button>`;
+                        }
+
+                        htmlOutput += `
+                            <div class="contact-row">
+                                <div class="contact-info">
+                                    <div class="platform-icon">${getPlatformIcon(friend.platform)}</div>
+                                    <div class="contact-text" title="${friend.contact_info}">${friend.contact_info}</div>
+                                </div>
+                                ${actionButton}
+                            </div>
+                        `;
+                    });
+
+                    htmlOutput += `</div></div>`;
+                }
+
+                listDiv.innerHTML = htmlOutput;
 
             } catch (error) {
                 listDiv.innerHTML = '<div style="text-align:center; color:#FF3B30;"><i class="fa-solid fa-triangle-exclamation"></i> ไม่สามารถเชื่อมต่อฐานข้อมูลได้</div>';
@@ -569,11 +697,11 @@
 
         function openModal() {
             if(!currentGacha) { alert("กรุณาเช็คตารางของตัวเองก่อนครับ"); return; }
+            document.getElementById('myContact').value = ''; 
             document.getElementById('contactModal').classList.add('active');
         }
         function closeModal() { document.getElementById('contactModal').classList.remove('active'); }
 
-        // รองรับการกด Enter
         document.getElementById("gachaInput").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
